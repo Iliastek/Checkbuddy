@@ -1,0 +1,22 @@
+# Dependencies
+node_modules
+
+# Build-Ausgabe
+dist
+dist-ssr
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Lokale Umgebungsvariablen (später für API-Keys)
+.env
+.env.local
+.env.*.local
