@@ -24,44 +24,33 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 text-slate-900 dark:from-slate-900 dark:to-slate-950 dark:text-slate-100">
+    <div className="min-h-screen bg-white text-black">
       <div className="mx-auto max-w-2xl px-4 py-12 sm:py-16">
         {/* Kopf */}
-        <header className="mb-8 text-center">
-          <div className="mb-3 inline-flex items-center gap-2 text-3xl font-bold">
-            <span
-              className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 text-2xl text-white shadow-md"
-              aria-hidden
-            >
-              ✓
-            </span>
-            Checkbuddy
-          </div>
-          <p className="mx-auto max-w-md text-slate-500 dark:text-slate-400">
-            Füge den Link zu einem Reel, TikTok oder Short ein – Checkbuddy prüft die
-            Behauptungen im Video auf ihren Wahrheitsgehalt.
+        <header className="mb-8">
+          <h1 className="text-2xl font-bold tracking-tight">Checkbuddy</h1>
+          <p className="mt-1 text-sm text-neutral-600">
+            Link zu einem Reel, TikTok oder Short einfügen – Checkbuddy prüft die Behauptungen
+            im Video.
           </p>
         </header>
 
         <LinkForm onCheck={handleCheck} loading={loading} />
 
         {/* Prototyp-Hinweis */}
-        <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-center text-xs text-amber-700 ring-1 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/20">
-          ⚠️ Prototyp: Die Ergebnisse sind zur Demonstration simuliert und noch nicht echt
-          geprüft.
+        <p className="mt-4 border border-black/15 bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
+          Prototyp: Die Ergebnisse sind zur Demonstration simuliert und noch nicht echt geprüft.
         </p>
 
         {error && (
-          <p className="mt-6 rounded-lg bg-red-50 px-4 py-3 text-center text-red-600 ring-1 ring-red-200 dark:bg-red-500/10 dark:text-red-300">
-            {error}
-          </p>
+          <p className="mt-6 border border-black px-4 py-3 text-sm">{error}</p>
         )}
 
         {result && <ResultView result={result} />}
 
         {!result && !loading && (
-          <div className="mt-12 text-center text-sm text-slate-400">
-            Noch kein Ergebnis – füge oben einen Link ein und starte die Prüfung.
+          <div className="mt-10 border-t border-black/10 pt-6 text-sm text-neutral-500">
+            Noch kein Ergebnis – oben einen Link einfügen und die Prüfung starten.
           </div>
         )}
       </div>

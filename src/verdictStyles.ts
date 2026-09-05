@@ -1,41 +1,38 @@
 import type { Verdict } from './types'
 
-/** Farb- und Icon-Zuordnung pro Bewertung – an einer Stelle gepflegt. */
+/** Rein monochrome Zuordnung pro Bewertung (schwarz/weiß/grau). */
 interface VerdictStyle {
-  /** Tailwind-Klassen für Badge-Hintergrund/Text. */
+  /** Klassen für das Badge – unterschieden über gefüllt vs. umrandet. */
   badge: string
-  /** Farbiger Rand/Akzent links an der Claim-Karte. */
+  /** Linker Akzentrand an der Claim-Karte. */
   accent: string
-  /** Emoji-Icon als schnelles visuelles Signal. */
+  /** Text-Symbol als schnelles Signal. */
   icon: string
 }
 
 export const VERDICT_STYLE: Record<Verdict, VerdictStyle> = {
-  true: {
-    badge: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300',
-    accent: 'border-emerald-400',
-    icon: '✓',
-  },
-  misleading: {
-    badge: 'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300',
-    accent: 'border-amber-400',
-    icon: '!',
-  },
+  // Falsch = gefüllt schwarz (stärkstes Warnsignal).
   false: {
-    badge: 'bg-red-100 text-red-800 dark:bg-red-500/15 dark:text-red-300',
-    accent: 'border-red-400',
+    badge: 'bg-black text-white',
+    accent: 'border-black',
     icon: '✕',
   },
+  // Wahr = schwarze Umrandung.
+  true: {
+    badge: 'border border-black text-black',
+    accent: 'border-black',
+    icon: '✓',
+  },
+  // Irreführend = grau gefüllt.
+  misleading: {
+    badge: 'bg-neutral-200 text-black',
+    accent: 'border-neutral-500',
+    icon: '!',
+  },
+  // Nicht überprüfbar = gestrichelte graue Umrandung.
   unverifiable: {
-    badge: 'bg-slate-200 text-slate-700 dark:bg-slate-500/20 dark:text-slate-300',
-    accent: 'border-slate-400',
+    badge: 'border border-dashed border-neutral-400 text-neutral-500',
+    accent: 'border-neutral-300',
     icon: '?',
   },
-}
-
-/** Farbe des Vertrauens-Scores je nach Höhe. */
-export function scoreColor(score: number): string {
-  if (score >= 70) return 'text-emerald-500'
-  if (score >= 40) return 'text-amber-500'
-  return 'text-red-500'
 }
