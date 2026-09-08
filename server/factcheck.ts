@@ -10,24 +10,43 @@ export interface FactCheckOutput {
 }
 
 const SYSTEM_PROMPT = `Du bist Checkbuddy, ein sorgfältiger Faktenprüfer für kurze Social-Media-Videos (TikTok, Reels, Shorts).
-Dir wird das Transkript (und ggf. Titel/Beschreibung) eines Videos gegeben.
+Dir wird der Inhalt eines Videos gegeben (Transkript und/oder Beschreibung).
+
+WICHTIG: Nutze die Websuche aktiv, um jede Behauptung an echten, aktuellen Quellen zu prüfen.
+Verlasse dich NICHT nur auf dein eigenes Wissen.
 
 Deine Aufgabe:
-1. Extrahiere die zentralen überprüfbaren BEHAUPTUNGEN aus dem Inhalt (keine Meinungen, keine reine Unterhaltung).
-2. Bewerte jede Behauptung einzeln mit einem Urteil:
+1. Extrahiere die zentralen überprüfbaren BEHAUPTUNGEN (keine Meinungen, keine reine Unterhaltung).
+2. Recherchiere jede Behauptung per Websuche.
+3. Bewerte jede Behauptung mit einem Urteil:
    - "true": belegbar korrekt
    - "misleading": im Kern etwas Wahres, aber verzerrt, übertrieben oder aus dem Kontext gerissen
    - "false": nachweislich falsch
    - "unverifiable": nicht überprüfbar / keine belastbare Faktenbasis
-3. Begründe jedes Urteil in 1-2 Sätzen sachlich.
-4. Gib, wenn möglich, seriöse Quellen an (Titel + URL). Erfinde KEINE URLs. Wenn du keine sichere Quelle kennst, lass die Quellenliste leer.
-5. Fälle ein Gesamturteil über das Video und einen Vertrauens-Score von 0 (komplett irreführend) bis 100 (voll vertrauenswürdig).
+4. Fülle pro Behauptung drei Felder klar getrennt:
+   - "explanation": kurze eigene Einschätzung (1-2 Sätze), warum dieses Urteil.
+   - "evidence": die KONKRETEN Fakten/Zahlen/Statistiken, die du per Websuche gefunden hast
+     (z.B. Studienergebnisse, konkrete Werte). Klartext auf Deutsch, OHNE URLs im Text.
+     Wenn du nichts Belastbares gefunden hast, lass dieses Feld leer.
+   - "sources": nur ECHTE URLs, die du tatsächlich über die Websuche aufgerufen hast. Erfinde niemals URLs.
+5. Fälle ein Gesamturteil und einen Vertrauens-Score von 0 (komplett irreführend) bis 100 (voll vertrauenswürdig).
 
 Antworte ausschließlich auf Deutsch. Sei vorsichtig: Lieber "unverifiable" als eine erfundene Gewissheit.`
 
 const VERDICTS: Verdict[] = ['true', 'misleading', 'false', 'unverifiable']
 
-/** Prüft den aufbereiteten Video-Inhalt mit einem OpenAI-Modell. */
+/** Entfernt Tracking-Müll aus URLs, den die Websuche manchmal anhängt. */
+function cleanUrl(url: string): string {
+  try {
+    const u = new URL(url)
+    for (const p of ['utm_source', 'utm_medium', 'utm_campaign']) u.searchParams.delete(p)
+    return u.toString()
+  } catch {
+    return url
+  }
+}
+
+/** Prüft den aufbereiteten Video-Inhalt mit Websuche und liefert strukturierte Ergebnisse. */
 export async function factCheck(
   client: OpenAI,
   opts: { content: string; title?: string; model: string },
@@ -36,16 +55,16 @@ export async function factCheck(
     .filter(Boolean)
     .join('\n\n')
 
-  const completion = await client.chat.completions.create({
+  const response = await client.responses.create({
     model: opts.model,
-    temperature: 0.2,
-    messages: [
+    tools: [{ type: 'web_search_preview' }],
+    input: [
       { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: context },
     ],
-    response_format: {
-      type: 'json_schema',
-      json_schema: {
+    text: {
+      format: {
+        type: 'json_schema',
         name: 'fact_check',
         strict: true,
         schema: {
@@ -64,6 +83,7 @@ export async function factCheck(
                   statement: { type: 'string' },
                   verdict: { type: 'string', enum: VERDICTS },
                   explanation: { type: 'string' },
+                  evidence: { type: 'string' },
                   sources: {
                     type: 'array',
                     items: {
@@ -77,7 +97,7 @@ export async function factCheck(
                     },
                   },
                 },
-                required: ['statement', 'verdict', 'explanation', 'sources'],
+                required: ['statement', 'verdict', 'explanation', 'evidence', 'sources'],
               },
             },
           },
@@ -87,9 +107,15 @@ export async function factCheck(
     },
   })
 
-  const content = completion.choices[0]?.message?.content
-  if (!content) {
+  const text = response.output_text
+  if (!text) {
     throw new Error('Das Modell hat keine Antwort geliefert.')
   }
-  return JSON.parse(content) as FactCheckOutput
+
+  const parsed = JSON.parse(text) as FactCheckOutput
+  // URLs säubern (Tracking-Parameter entfernen).
+  for (const claim of parsed.claims) {
+    claim.sources = claim.sources.map((s) => ({ ...s, url: cleanUrl(s.url) }))
+  }
+  return parsed
 }

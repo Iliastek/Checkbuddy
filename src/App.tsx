@@ -39,8 +39,8 @@ export default function App() {
 
         {/* Hinweis */}
         <p className="mt-4 border border-black/15 bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
-          Der Inhalt wird heruntergeladen, transkribiert und per KI geprüft – das dauert je nach
-          Video einige Sekunden. KI-Bewertungen können Fehler enthalten.
+          Der Inhalt wird heruntergeladen, transkribiert und per KI mit Websuche geprüft – das
+          kann bis zu einer Minute dauern. KI-Bewertungen können Fehler enthalten.
         </p>
 
         {error && (

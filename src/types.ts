@@ -16,8 +16,13 @@ export interface Claim {
   /** Die Aussage, wie sie im Video getroffen wurde. */
   statement: string
   verdict: Verdict
-  /** Kurze Begründung, warum diese Bewertung. */
+  /** Kurze KI-Einschätzung, warum diese Bewertung. */
   explanation: string
+  /**
+   * Konkrete, per Websuche gefundene Fakten/Statistiken, die das Urteil stützen.
+   * Wird in der UI getrennt von der KI-Einschätzung hervorgehoben. Kann leer sein.
+   */
+  evidence: string
   sources: Source[]
 }
 
