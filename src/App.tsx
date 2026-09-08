@@ -37,9 +37,10 @@ export default function App() {
 
         <LinkForm onCheck={handleCheck} loading={loading} />
 
-        {/* Prototyp-Hinweis */}
+        {/* Hinweis */}
         <p className="mt-4 border border-black/15 bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
-          Prototyp: Die Ergebnisse sind zur Demonstration simuliert und noch nicht echt geprüft.
+          Der Inhalt wird heruntergeladen, transkribiert und per KI geprüft – das dauert je nach
+          Video einige Sekunden. KI-Bewertungen können Fehler enthalten.
         </p>
 
         {error && (
