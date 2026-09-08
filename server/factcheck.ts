@@ -27,16 +27,12 @@ Antworte ausschließlich auf Deutsch. Sei vorsichtig: Lieber "unverifiable" als 
 
 const VERDICTS: Verdict[] = ['true', 'misleading', 'false', 'unverifiable']
 
-/** Prüft ein Transkript mit einem OpenAI-Modell und liefert strukturierte Ergebnisse. */
+/** Prüft den aufbereiteten Video-Inhalt mit einem OpenAI-Modell. */
 export async function factCheck(
   client: OpenAI,
-  opts: { transcript: string; title?: string; description?: string; model: string },
+  opts: { content: string; title?: string; model: string },
 ): Promise<FactCheckOutput> {
-  const context = [
-    opts.title ? `Titel: ${opts.title}` : null,
-    opts.description ? `Beschreibung: ${opts.description}` : null,
-    `Transkript:\n${opts.transcript}`,
-  ]
+  const context = [opts.title ? `Titel: ${opts.title}` : null, opts.content]
     .filter(Boolean)
     .join('\n\n')
 

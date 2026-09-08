@@ -7,9 +7,15 @@ import { detectPlatform } from '../src/platform'
 import { extractAudio } from './extract'
 import { transcribeAudio } from './transcribe'
 import { factCheck } from './factcheck'
+import { buildAnalysisInput } from './content'
 
 const PORT = Number(process.env.PORT ?? 3001)
 const MODEL = process.env.OPENAI_MODEL ?? 'gpt-4o'
+// Sprachen, die Whisper durchprobiert (Auto-Erkennung ist unzuverlässig).
+const WHISPER_LANGUAGES = (process.env.WHISPER_LANGUAGES ?? 'de,en')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean)
 
 const apiKey = process.env.OPENAI_API_KEY
 if (!apiKey) {
@@ -43,24 +49,41 @@ app.post('/api/check', async (req, res) => {
 
     // 2) Audio -> Text (Whisper).
     console.log('[check] Transkribiere Audio…')
-    const transcript = await transcribeAudio(client, extracted.audioPath)
-    if (!transcript) {
-      throw new Error('Das Video enthielt keinen erkennbaren gesprochenen Inhalt.')
+    const rawTranscript = await transcribeAudio(client, extracted.audioPath, WHISPER_LANGUAGES)
+
+    // Prüfbaren Inhalt zusammenstellen (Sprache + Beschreibung, Müll rausfiltern).
+    const input = buildAnalysisInput(rawTranscript, extracted.description)
+
+    // Kein prüfbarer Inhalt: ehrliche Rückmeldung statt Fehler oder „0/100“.
+    if (!input) {
+      console.log('[check] Kein prüfbarer Inhalt gefunden.')
+      const empty: CheckResult = {
+        url,
+        platform: detectPlatform(url),
+        transcript: '',
+        overallVerdict: 'unverifiable',
+        overallSummary:
+          'In diesem Video wurde kein gesprochener Inhalt und keine Beschreibung gefunden, die sich prüfen lässt. Vermutlich enthält es nur Musik, Sound oder Text im Bild – Letzteres kann Checkbuddy aktuell noch nicht lesen.',
+        trustScore: 0,
+        claims: [],
+      }
+      return res.json(empty)
     }
 
-    // 3) Text prüfen (GPT).
-    console.log('[check] Prüfe Behauptungen…')
+    // 3) Inhalt prüfen (GPT).
+    console.log(
+      `[check] Prüfe Behauptungen… (Sprache: ${input.hasSpeech ? 'ja' : 'nein'}, Beschreibung: ${input.hasCaption ? 'ja' : 'nein'})`,
+    )
     const analysis = await factCheck(client, {
-      transcript,
+      content: input.prompt,
       title: extracted.title,
-      description: extracted.description,
       model: MODEL,
     })
 
     const result: CheckResult = {
       url,
       platform: detectPlatform(url),
-      transcript,
+      transcript: input.analyzed,
       ...analysis,
     }
     console.log('[check] Fertig.')
