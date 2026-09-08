@@ -2,6 +2,16 @@
 
 :root {
   color-scheme: light;
+
+  /* Farbpalette – inspiriert vom weichen Meditations-App-Look */
+  --bg: #dcefe9; /* sanftes Mint */
+  --card: #ffffff;
+  --primary: #46297a; /* tiefes Violett */
+  --primary-hover: #371f61;
+  --heading: #2b2a4d; /* dunkles Indigo */
+  --text: #5a5a72;
+  --muted: #9aa0b3;
+  --accent-soft: #efeafc; /* helles Violett für Belege/Chips */
 }
 
 html,
@@ -12,8 +22,8 @@ body,
 
 body {
   margin: 0;
-  background: #fff;
-  color: #000;
+  background: var(--bg);
+  color: var(--text);
   font-family:
     system-ui,
     -apple-system,
@@ -22,10 +32,17 @@ body {
     sans-serif;
 }
 
+/* Weiche, gehobene Karten */
+.cb-card {
+  background: var(--card);
+  border-radius: 1.75rem;
+  box-shadow: 0 18px 40px -18px rgba(70, 41, 122, 0.28);
+}
+
 @keyframes cb-fade-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -34,5 +51,24 @@ body {
 }
 
 .cb-fade-in {
-  animation: cb-fade-in 0.3s ease-out both;
+  animation: cb-fade-in 0.35s ease-out both;
+}
+
+@keyframes cb-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.9);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(0) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scale(1);
+  }
+}
+
+.cb-pop {
+  animation: cb-pop 1.6s ease-out forwards;
 }

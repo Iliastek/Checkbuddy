@@ -10,9 +10,11 @@ interface Props {
 /** Monochromes Etikett für eine Bewertung (Wahr / Irreführend / Falsch / …). */
 export default function VerdictBadge({ verdict, size = 'sm' }: Props) {
   const style = VERDICT_STYLE[verdict]
-  const sizing = size === 'md' ? 'text-sm px-3 py-1' : 'text-xs px-2 py-0.5'
+  const sizing = size === 'md' ? 'text-sm px-3.5 py-1' : 'text-xs px-3 py-1'
   return (
-    <span className={`inline-flex items-center gap-1.5 font-medium ${sizing} ${style.badge}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full font-semibold ${sizing} ${style.badge}`}
+    >
       <span aria-hidden>{style.icon}</span>
       {VERDICT_LABEL[verdict]}
     </span>

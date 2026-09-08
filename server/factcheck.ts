@@ -19,7 +19,11 @@ Verlasse dich NICHT nur auf dein eigenes Wissen.
 
 Deine Aufgabe:
 1. Extrahiere die zentralen überprüfbaren BEHAUPTUNGEN (keine Meinungen, keine reine Unterhaltung).
-2. Recherchiere jede Behauptung per Websuche.
+2. Recherchiere JEDE Behauptung gründlich per Websuche – bei Bedarf mit mehreren Suchanfragen.
+   Gib dich nicht mit einer oberflächlichen Einschätzung zufrieden. Nenne eine Behauptung erst
+   dann "unverifiable", wenn du wirklich gesucht und nichts Belastbares gefunden hast.
+   Wenn eine Behauptung konkrete Zahlen, Mengen, Dosierungen oder Anteile nennt, RECHNE sie nach
+   und vergleiche das Ergebnis mit den offiziellen Referenz-/Empfehlungswerten aus deinen Quellen.
 3. Bewerte jede Behauptung mit einem Urteil:
    - "true": belegbar korrekt
    - "misleading": im Kern etwas Wahres, aber verzerrt, übertrieben oder aus dem Kontext gerissen
@@ -27,9 +31,10 @@ Deine Aufgabe:
    - "unverifiable": nicht überprüfbar / keine belastbare Faktenbasis
 4. Fülle pro Behauptung diese Felder klar getrennt:
    - "explanation": kurze eigene Einschätzung (1-2 Sätze), warum dieses Urteil.
-   - "evidence": die KONKRETEN Fakten/Zahlen/Statistiken, die du per Websuche gefunden hast
-     (z.B. Studienergebnisse, konkrete Werte). Klartext auf Deutsch, OHNE URLs im Text.
-     Wenn du nichts Belastbares gefunden hast, lass dieses Feld leer.
+   - "evidence": die KONKRETEN Fakten/Zahlen/Statistiken aus deinen Quellen (z.B. Studienergebnisse,
+     offizielle Referenzwerte, konkrete Berechnungen). Klartext auf Deutsch, OHNE URLs im Text.
+     Fülle dieses Feld möglichst IMMER mit konkreten Zahlen/Fakten. Lass es nur leer, wenn die
+     Websuche wirklich nichts Belastbares hergibt.
    - "sources": nur ECHTE URLs, die du tatsächlich über die Websuche aufgerufen hast. Erfinde niemals URLs.
    - "confidence": wie sicher du dir bei diesem Urteil bist, 0 (reine Vermutung) bis 100 (sehr sicher).
      Hohe Werte NUR, wenn du echte, belastbare Quellen gefunden hast. Ohne Quellen niedrig bleiben.
@@ -61,7 +66,7 @@ export async function factCheck(
 
   const response = await client.responses.create({
     model: opts.model,
-    tools: [{ type: 'web_search_preview' }],
+    tools: [{ type: 'web_search_preview', search_context_size: 'high' }],
     input: [
       { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: context },
