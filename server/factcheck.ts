@@ -1,11 +1,13 @@
 import type OpenAI from 'openai'
 import type { Claim, Verdict } from '../src/types'
 
-/** Der Teil des Ergebnisses, den das Modell liefert (Rest setzt der Server). */
+/**
+ * Der Teil des Ergebnisses, den das Modell liefert. Gesamturteil und
+ * Vertrauens-Score werden NICHT vom Modell übernommen, sondern im Server aus
+ * den einzelnen Behauptungen berechnet (siehe scoring.ts).
+ */
 export interface FactCheckOutput {
-  overallVerdict: Verdict
   overallSummary: string
-  trustScore: number
   claims: Claim[]
 }
 
@@ -23,13 +25,15 @@ Deine Aufgabe:
    - "misleading": im Kern etwas Wahres, aber verzerrt, übertrieben oder aus dem Kontext gerissen
    - "false": nachweislich falsch
    - "unverifiable": nicht überprüfbar / keine belastbare Faktenbasis
-4. Fülle pro Behauptung drei Felder klar getrennt:
+4. Fülle pro Behauptung diese Felder klar getrennt:
    - "explanation": kurze eigene Einschätzung (1-2 Sätze), warum dieses Urteil.
    - "evidence": die KONKRETEN Fakten/Zahlen/Statistiken, die du per Websuche gefunden hast
      (z.B. Studienergebnisse, konkrete Werte). Klartext auf Deutsch, OHNE URLs im Text.
      Wenn du nichts Belastbares gefunden hast, lass dieses Feld leer.
    - "sources": nur ECHTE URLs, die du tatsächlich über die Websuche aufgerufen hast. Erfinde niemals URLs.
-5. Fälle ein Gesamturteil und einen Vertrauens-Score von 0 (komplett irreführend) bis 100 (voll vertrauenswürdig).
+   - "confidence": wie sicher du dir bei diesem Urteil bist, 0 (reine Vermutung) bis 100 (sehr sicher).
+     Hohe Werte NUR, wenn du echte, belastbare Quellen gefunden hast. Ohne Quellen niedrig bleiben.
+5. "overallSummary": eine kurze Gesamteinschätzung in Worten (der Zahlen-Score wird separat berechnet).
 
 Antworte ausschließlich auf Deutsch. Sei vorsichtig: Lieber "unverifiable" als eine erfundene Gewissheit.`
 
@@ -71,9 +75,7 @@ export async function factCheck(
           type: 'object',
           additionalProperties: false,
           properties: {
-            overallVerdict: { type: 'string', enum: VERDICTS },
             overallSummary: { type: 'string' },
-            trustScore: { type: 'integer', minimum: 0, maximum: 100 },
             claims: {
               type: 'array',
               items: {
@@ -84,6 +86,7 @@ export async function factCheck(
                   verdict: { type: 'string', enum: VERDICTS },
                   explanation: { type: 'string' },
                   evidence: { type: 'string' },
+                  confidence: { type: 'integer', minimum: 0, maximum: 100 },
                   sources: {
                     type: 'array',
                     items: {
@@ -97,11 +100,18 @@ export async function factCheck(
                     },
                   },
                 },
-                required: ['statement', 'verdict', 'explanation', 'evidence', 'sources'],
+                required: [
+                  'statement',
+                  'verdict',
+                  'explanation',
+                  'evidence',
+                  'confidence',
+                  'sources',
+                ],
               },
             },
           },
-          required: ['overallVerdict', 'overallSummary', 'trustScore', 'claims'],
+          required: ['overallSummary', 'claims'],
         },
       },
     },

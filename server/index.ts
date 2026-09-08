@@ -8,6 +8,7 @@ import { extractAudio } from './extract'
 import { transcribeAudio } from './transcribe'
 import { factCheck } from './factcheck'
 import { buildAnalysisInput } from './content'
+import { computeTrustScore, deriveOverallVerdict } from './scoring'
 
 const PORT = Number(process.env.PORT ?? 3001)
 const MODEL = process.env.OPENAI_MODEL ?? 'gpt-4o'
@@ -80,13 +81,21 @@ app.post('/api/check', async (req, res) => {
       model: MODEL,
     })
 
+    // Vertrauens-Score und Gesamturteil selbst berechnen (nachvollziehbar,
+    // konsistent) – nicht vom Modell raten lassen.
+    const trustScore = computeTrustScore(analysis.claims)
+    const overallVerdict = deriveOverallVerdict(analysis.claims, trustScore)
+
     const result: CheckResult = {
       url,
       platform: detectPlatform(url),
       transcript: input.analyzed,
-      ...analysis,
+      overallVerdict,
+      overallSummary: analysis.overallSummary,
+      trustScore,
+      claims: analysis.claims,
     }
-    console.log('[check] Fertig.')
+    console.log(`[check] Fertig. Score ${trustScore}/100 (${overallVerdict}).`)
     res.json(result)
   } catch (err) {
     const message =

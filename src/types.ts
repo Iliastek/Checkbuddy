@@ -23,6 +23,8 @@ export interface Claim {
    * Wird in der UI getrennt von der KI-Einschätzung hervorgehoben. Kann leer sein.
    */
   evidence: string
+  /** Wie sicher sich die KI beim Urteil ist (0–100). Fließt in den Vertrauens-Score ein. */
+  confidence: number
   sources: Source[]
 }
 
