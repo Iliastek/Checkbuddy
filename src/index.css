@@ -4,7 +4,7 @@
   color-scheme: light;
 
   /* Farbpalette – inspiriert vom weichen Meditations-App-Look */
-  --bg: #dcefe9; /* sanftes Mint */
+  --bg: white; /* sanftes Mint */
   --card: #ffffff;
   --primary: #46297a; /* tiefes Violett */
   --primary-hover: #371f61;
