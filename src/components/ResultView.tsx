@@ -19,7 +19,7 @@ export default function ResultView({ result }: Props) {
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <p className="mb-2 text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
-              {PLATFORM_LABEL[result.platform]} · Gesamturteil
+              {PLATFORM_LABEL[result.platform]} · Overall verdict
             </p>
             <VerdictBadge verdict={result.overallVerdict} size="md" />
             <p className="mt-3 leading-relaxed text-[var(--text)]">{result.overallSummary}</p>
@@ -48,9 +48,9 @@ export default function ResultView({ result }: Props) {
               <span aria-hidden className="inline-block w-3 text-[var(--muted)]">
                 {showTranscript ? '▾' : '▸'}
               </span>
-              Erkannter Inhalt
+              Detected content
               <span className="ml-auto text-xs font-normal text-[var(--muted)]">
-                {showTranscript ? 'ausblenden' : 'anzeigen'}
+                {showTranscript ? 'hide' : 'show'}
               </span>
             </button>
             {showTranscript && (
@@ -64,7 +64,7 @@ export default function ResultView({ result }: Props) {
       {result.claims.length > 0 && (
         <div>
           <h2 className="mb-3 px-1 text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
-            Geprüfte Behauptungen ({result.claims.length})
+            Checked claims ({result.claims.length})
           </h2>
           <ul className="space-y-3">
             {result.claims.map((claim, i) => (

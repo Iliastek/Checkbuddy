@@ -78,7 +78,7 @@ export async function extractAudio(url: string): Promise<ExtractedContent> {
     const files = await readdir(dir)
     const video = files.find((f) => /\.(mp4|webm|mkv|mov)$/i.test(f))
     if (!video) {
-      throw new Error('Das Video konnte nicht heruntergeladen werden.')
+      throw new Error('The video could not be downloaded.')
     }
     const videoPath = join(dir, video)
 

@@ -38,7 +38,7 @@ app.get('/api/health', (_req, res) => {
 app.post('/api/check', async (req, res) => {
   const url: unknown = req.body?.url
   if (typeof url !== 'string' || !url.trim()) {
-    return res.status(400).json({ error: 'Bitte einen gültigen Link angeben.' })
+    return res.status(400).json({ error: 'Please provide a valid link.' })
   }
 
   let cleanup: (() => Promise<void>) | null = null
@@ -48,12 +48,12 @@ app.post('/api/check', async (req, res) => {
     const extracted = await extractAudio(url)
     cleanup = extracted.cleanup
 
-    // 2) Audio -> Text (Whisper).
+    // 2) Audio -> Text (Whisper). Liefert auch die erkannte Sprache.
     console.log('[check] Transkribiere Audio…')
-    const rawTranscript = await transcribeAudio(client, extracted.audioPath, WHISPER_LANGUAGES)
+    const transcription = await transcribeAudio(client, extracted.audioPath, WHISPER_LANGUAGES)
 
     // Prüfbaren Inhalt zusammenstellen (Sprache + Beschreibung, Müll rausfiltern).
-    const input = buildAnalysisInput(rawTranscript, extracted.description)
+    const input = buildAnalysisInput(transcription.text, extracted.description)
 
     // Kein prüfbarer Inhalt: ehrliche Rückmeldung statt Fehler oder „0/100“.
     if (!input) {
@@ -64,7 +64,7 @@ app.post('/api/check', async (req, res) => {
         transcript: '',
         overallVerdict: 'unverifiable',
         overallSummary:
-          'In diesem Video wurde kein gesprochener Inhalt und keine Beschreibung gefunden, die sich prüfen lässt. Vermutlich enthält es nur Musik, Sound oder Text im Bild – Letzteres kann Checkbuddy aktuell noch nicht lesen.',
+          'No spoken content or description could be found in this video that can be checked. It probably only contains music, sound or on-screen text – the latter cannot be read by Checkbuddy yet.',
         trustScore: 0,
         claims: [],
       }
@@ -79,6 +79,8 @@ app.post('/api/check', async (req, res) => {
       content: input.prompt,
       title: extracted.title,
       model: MODEL,
+      // Bei echter Sprache die erkannte Videosprache mitgeben → Quellen in dieser Sprache.
+      contentLanguage: input.hasSpeech ? transcription.language : undefined,
     })
 
     // Vertrauens-Score und Gesamturteil selbst berechnen (nachvollziehbar,
@@ -99,7 +101,7 @@ app.post('/api/check', async (req, res) => {
     res.json(result)
   } catch (err) {
     const message =
-      err instanceof Error ? err.message : 'Beim Prüfen ist ein unbekannter Fehler aufgetreten.'
+      err instanceof Error ? err.message : 'An unknown error occurred while checking.'
     console.error('[check] Fehler:', message)
     res.status(500).json({ error: message })
   } finally {

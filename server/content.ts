@@ -87,8 +87,8 @@ export function buildAnalysisInput(
   if (!speech && !hasCaption) return null
 
   const parts: string[] = []
-  if (speech) parts.push(`Gesprochener Inhalt (Transkript):\n${speech}`)
-  if (hasCaption) parts.push(`Bildunterschrift / Beschreibung des Videos:\n${caption}`)
+  if (speech) parts.push(`Spoken content (transcript):\n${speech}`)
+  if (hasCaption) parts.push(`Video caption / description:\n${caption}`)
 
   return {
     analyzed: speech || caption,

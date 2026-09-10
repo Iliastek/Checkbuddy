@@ -23,7 +23,7 @@ export default function ClaimCard({ claim, index }: Props) {
 
       {/* KI-Einschätzung */}
       <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--muted)]">
-        Einschätzung
+        Assessment
       </p>
       <p className="text-sm leading-relaxed text-[var(--text)]">{claim.explanation}</p>
 
@@ -31,7 +31,7 @@ export default function ClaimCard({ claim, index }: Props) {
       {claim.evidence && (
         <div className="mt-3 rounded-xl bg-[var(--accent-soft)] px-4 py-3">
           <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--primary)]">
-            Belege aus dem Web
+            Evidence from the web
           </p>
           <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--heading)]">
             {claim.evidence}
@@ -43,7 +43,7 @@ export default function ClaimCard({ claim, index }: Props) {
       {claim.sources.length > 0 && (
         <div className="mt-3">
           <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--muted)]">
-            Quellen
+            Sources
           </p>
           <ol className="space-y-1">
             {claim.sources.map((source, i) => (

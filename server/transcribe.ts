@@ -17,9 +17,10 @@ export async function transcribeAudio(
   client: OpenAI,
   audioPath: string,
   languages: string[],
-): Promise<string> {
+): Promise<{ text: string; language: string }> {
   let best = ''
   let bestScore = -1
+  let bestLanguage = languages[0] ?? 'en'
 
   for (const language of languages) {
     const res = await client.audio.transcriptions.create({
@@ -34,8 +35,9 @@ export async function transcribeAudio(
     if (score > bestScore) {
       bestScore = score
       best = cleaned
+      bestLanguage = language
     }
   }
 
-  return best
+  return { text: best, language: bestLanguage }
 }

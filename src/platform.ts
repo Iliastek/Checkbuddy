@@ -25,15 +25,15 @@ export function looksLikeUrl(value: string): boolean {
 }
 
 export const VERDICT_LABEL: Record<Verdict, string> = {
-  true: 'Wahr',
-  misleading: 'Irreführend',
-  false: 'Falsch',
-  unverifiable: 'Nicht überprüfbar',
+  true: 'True',
+  misleading: 'Misleading',
+  false: 'False',
+  unverifiable: 'Unverifiable',
 }
 
 export const PLATFORM_LABEL: Record<Platform, string> = {
   tiktok: 'TikTok',
   instagram: 'Instagram',
   youtube: 'YouTube',
-  unknown: 'Unbekannte Quelle',
+  unknown: 'Unknown source',
 }

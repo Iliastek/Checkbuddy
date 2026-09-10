@@ -22,7 +22,7 @@ export default function App() {
       const grew = registerCheck() // Streak fürs Fact-Checken aktualisieren
       if (grew) setFlash((f) => f + 1)
     } catch {
-      setError('Beim Prüfen ist etwas schiefgelaufen. Bitte erneut versuchen.')
+      setError('Something went wrong while checking. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -36,14 +36,14 @@ export default function App() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-[var(--heading)]">Checkbuddy</h1>
             <p className="mt-1 text-sm text-[var(--text)]">
-              Reel oder TikTok einfügen – wir prüfen die Behauptungen für dich.
+              Paste a Reel or TikTok – we'll check the claims for you.
             </p>
           </div>
 
           {/* Streak-Chip */}
           <div className="relative shrink-0">
             <div
-              title={`${streak} Tag${streak === 1 ? '' : 'e'} Streak`}
+              title={`${streak} day${streak === 1 ? '' : 's'} streak`}
               className="flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 shadow-[0_10px_24px_-12px_rgba(70,41,122,0.4)]"
             >
               <span aria-hidden>🔥</span>
@@ -64,8 +64,8 @@ export default function App() {
         <div className="cb-card p-5 sm:p-6">
           <LinkForm onCheck={handleCheck} loading={loading} />
           <p className="mt-4 rounded-xl bg-[var(--accent-soft)] px-4 py-2.5 text-xs leading-relaxed text-[var(--text)]">
-            Der Inhalt wird geladen, transkribiert und per KI mit Websuche geprüft – das kann bis
-            zu einer Minute dauern. KI-Bewertungen können Fehler enthalten.
+            The content is downloaded, transcribed and checked by AI with web search – this can take
+            up to a minute. AI assessments may contain errors.
           </p>
         </div>
 
@@ -77,7 +77,7 @@ export default function App() {
 
         {!result && !loading && !error && (
           <div className="mt-10 text-center text-sm text-[var(--muted)]">
-            Noch kein Ergebnis – füge oben einen Link ein und starte deinen Streak.
+            No result yet – paste a link above and start your streak.
           </div>
         )}
       </div>
