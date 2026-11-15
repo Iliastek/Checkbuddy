@@ -57,6 +57,13 @@ npm run build     # Typprüfung (Frontend + Server) und Produktions-Build
 npm run preview   # Frontend-Build lokal ansehen
 ```
 
+Hilfsskripte (`scripts/`):
+
+```bash
+node scripts/_models.mjs   # listet die im OpenAI-Account verfügbaren Text-Modelle
+                           # (praktisch, um OPENAI_MODEL zu wählen; nutzt die .env)
+```
+
 ## Projektstruktur
 
 ```
@@ -73,6 +80,9 @@ server/                  # Backend (Express)
 ├── extract.ts           # yt-dlp: Audio + Metadaten aus dem Link
 ├── transcribe.ts        # OpenAI Whisper: Audio → Text
 └── factcheck.ts         # OpenAI GPT: Text → strukturiertes Ergebnis
+
+scripts/                 # Entwickler-Hilfsskripte (nicht Teil der App)
+└── _models.mjs          # listet die verfügbaren OpenAI-Text-Modelle
 ```
 
 ## Fahrplan
