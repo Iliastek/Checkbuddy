@@ -17,7 +17,7 @@ export async function checkLink(url: string): Promise<CheckResult> {
 
   if (!res.ok) {
     // Fehlermeldung des Servers durchreichen, falls vorhanden.
-    let message = 'Der Fakten-Check ist fehlgeschlagen.'
+    let message = 'The fact-check failed.'
     try {
       const data = await res.json()
       if (data?.error) message = data.error
