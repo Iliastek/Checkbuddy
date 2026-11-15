@@ -25,6 +25,12 @@ test('cleanTranscript entfernt Halluzinations-Credits', () => {
   expect(cleanTranscript('Transcription by amara.org community.')).toBe('')
 })
 
+test('cleanTranscript behält normale Sätze neben einer Credit-Zeile', () => {
+  expect(cleanTranscript('The earth orbits the sun. Untertitel im Auftrag des ZDF.')).toBe(
+    'The earth orbits the sun.',
+  )
+})
+
 test('cleanTranscript faltet unmittelbar wiederholte Sätze zusammen', () => {
   expect(cleanTranscript('The sky is blue. The sky is blue.')).toBe('The sky is blue.')
 })

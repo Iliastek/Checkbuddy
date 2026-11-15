@@ -53,8 +53,8 @@ test('alle Behauptungen unverifiable -> Gesamturteil unverifiable', () => {
 })
 
 test('Gesamturteil folgt den Score-Schwellen (70 / 40)', () => {
-  const some = [claim({ verdict: 'true' })]
-  expect(deriveOverallVerdict(some, 70)).toBe('true')
-  expect(deriveOverallVerdict(some, 55)).toBe('misleading')
-  expect(deriveOverallVerdict(some, 39)).toBe('false')
+  const oneTrueClaim = [claim({ verdict: 'true' })]
+  expect(deriveOverallVerdict(oneTrueClaim, 70)).toBe('true')
+  expect(deriveOverallVerdict(oneTrueClaim, 55)).toBe('misleading')
+  expect(deriveOverallVerdict(oneTrueClaim, 39)).toBe('false')
 })
