@@ -21,8 +21,10 @@ export default function App() {
       setResult(res)
       const grew = registerCheck() // Streak fürs Fact-Checken aktualisieren
       if (grew) setFlash((f) => f + 1)
-    } catch {
-      setError('Something went wrong while checking. Please try again.')
+    } catch (err) {
+      // Die konkrete Server-Meldung durchreichen (z.B. "The video could not be downloaded.")
+      // statt immer denselben generischen Text anzuzeigen.
+      setError(err instanceof Error ? err.message : 'Something went wrong while checking.')
     } finally {
       setLoading(false)
     }
