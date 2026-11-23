@@ -35,7 +35,7 @@ export type Platform = 'tiktok' | 'instagram' | 'youtube' | 'unknown'
 export interface CheckResult {
   url: string
   platform: Platform
-  /** Kurzer, aus dem Video gezogener Inhaltstext (im Prototyp simuliert). */
+  /** Kurzer, aus dem Video gezogener Inhaltstext (Transkript/Beschreibung). */
   transcript: string
   /** Gesamturteil über das ganze Video. */
   overallVerdict: Verdict
