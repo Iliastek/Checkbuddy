@@ -3,15 +3,16 @@ import { promisify } from 'node:util'
 import { mkdtemp, readdir, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { FFMPEG_MAX_BUFFER, YTDLP_ATTEMPTS, YTDLP_MAX_BUFFER } from './config'
 
 const execFileAsync = promisify(execFile)
 
 /** Führt yt-dlp aus und wiederholt bei einem Fehlversuch (TikTok/yt-dlp hakt manchmal beim 1. Mal). */
-async function runYtDlp(args: string[], attempts = 3): Promise<string> {
+async function runYtDlp(args: string[], attempts = YTDLP_ATTEMPTS): Promise<string> {
   let lastErr: unknown
   for (let i = 1; i <= attempts; i++) {
     try {
-      const { stdout } = await execFileAsync('yt-dlp', args, { maxBuffer: 1024 * 1024 * 20 })
+      const { stdout } = await execFileAsync('yt-dlp', args, { maxBuffer: YTDLP_MAX_BUFFER })
       return stdout
     } catch (err) {
       lastErr = err
@@ -73,7 +74,7 @@ async function extractAudioTrack(videoPath: string, dir: string): Promise<string
   await execFileAsync(
     'ffmpeg',
     ['-y', '-i', videoPath, '-vn', '-acodec', 'libmp3lame', '-q:a', '5', audioPath],
-    { maxBuffer: 1024 * 1024 * 20 },
+    { maxBuffer: FFMPEG_MAX_BUFFER },
   )
   return audioPath
 }

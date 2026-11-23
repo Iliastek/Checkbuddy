@@ -1,5 +1,6 @@
 import type OpenAI from 'openai'
 import type { Claim, Verdict } from '../src/types'
+import { REACHABILITY_TIMEOUT_MS } from './config'
 
 /**
  * Der Teil des Ergebnisses, den das Modell liefert. Gesamturteil und
@@ -66,7 +67,7 @@ function cleanUrl(url: string): string {
  */
 async function isReachable(url: string): Promise<boolean> {
   const ctrl = new AbortController()
-  const timer = setTimeout(() => ctrl.abort(), 8000)
+  const timer = setTimeout(() => ctrl.abort(), REACHABILITY_TIMEOUT_MS)
   try {
     const res = await fetch(url, {
       method: 'GET',
