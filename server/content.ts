@@ -36,7 +36,7 @@ export function cleanTranscript(text: string): string {
 }
 
 /** Grobe Inhalts-„Reichhaltigkeit“: Anzahl unterschiedlicher Wörter. Für Ranking. */
-export function scoreText(text: string): number {
+export function uniqueWordCount(text: string): number {
   const words = text.toLowerCase().match(/\p{L}+/gu) ?? []
   return new Set(words).size
 }

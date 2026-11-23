@@ -1,6 +1,6 @@
 import { createReadStream } from 'node:fs'
 import type OpenAI from 'openai'
-import { cleanTranscript, scoreText } from './content'
+import { cleanTranscript, uniqueWordCount } from './content'
 
 /**
  * Transkribiert eine Audiodatei mit OpenAI Whisper zu Text.
@@ -30,7 +30,7 @@ export async function transcribeAudio(
       language,
     })
     const cleaned = cleanTranscript(res.text ?? '')
-    const score = scoreText(cleaned)
+    const score = uniqueWordCount(cleaned)
     console.log(`[transcribe] Sprache "${language}": ${score} verschiedene Wörter`)
     if (score > bestScore) {
       bestScore = score
