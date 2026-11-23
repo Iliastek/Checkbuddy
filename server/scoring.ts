@@ -1,4 +1,5 @@
 import type { Claim, Verdict } from '../src/types'
+import { SOURCE_WEIGHT_FACTOR } from './config'
 
 // Nachvollziehbares Bewertungssystem: Der Vertrauens-Score wird HIER berechnet
 // (nicht vom Modell geraten), damit er konsistent ist und Sinn ergibt.
@@ -28,7 +29,7 @@ function claimWeight(claim: Claim): number {
   // Confidence 0–100 -> mind. 5, damit eine Behauptung nie ganz 0 wiegt.
   const confidence = Math.max(clamp(claim.confidence ?? 50, 0, 100), 5) / 100
   // Mit echten Quellen zählt die Behauptung 1,5x so stark.
-  const sourceFactor = claim.sources.length > 0 ? 1.5 : 1
+  const sourceFactor = claim.sources.length > 0 ? SOURCE_WEIGHT_FACTOR : 1
   return confidence * sourceFactor
 }
 
