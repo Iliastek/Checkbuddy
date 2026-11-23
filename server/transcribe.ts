@@ -19,7 +19,7 @@ export async function transcribeAudio(
   languages: string[],
 ): Promise<{ text: string; language: string }> {
   let best = ''
-  let bestScore = -1
+  let bestWordCount = -1
   let bestLanguage = languages[0] ?? 'en'
 
   for (const language of languages) {
@@ -30,10 +30,10 @@ export async function transcribeAudio(
       language,
     })
     const cleaned = cleanTranscript(res.text ?? '')
-    const score = uniqueWordCount(cleaned)
-    console.log(`[transcribe] Sprache "${language}": ${score} verschiedene Wörter`)
-    if (score > bestScore) {
-      bestScore = score
+    const wordCount = uniqueWordCount(cleaned)
+    console.log(`[transcribe] Sprache "${language}": ${wordCount} verschiedene Wörter`)
+    if (wordCount > bestWordCount) {
+      bestWordCount = wordCount
       best = cleaned
       bestLanguage = language
     }
