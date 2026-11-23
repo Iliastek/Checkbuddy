@@ -28,7 +28,10 @@ async function runYtDlp(args: string[], attempts = YTDLP_ATTEMPTS): Promise<stri
 export interface ExtractedContent {
   /** Pfad zur extrahierten Audiodatei (mp3). */
   audioPath: string
-  /** Pfad zur heruntergeladenen Videodatei (für spätere Bild-Analyse). */
+  /**
+   * Pfad zur heruntergeladenen Videodatei. Wird aktuell nicht genutzt – bewusst
+   * behalten als Vorbereitung für das geplante OCR-Feature (On-Screen-Text lesen).
+   */
   videoPath: string
   /** Aufräum-Funktion – löscht das temporäre Verzeichnis. */
   cleanup: () => Promise<void>
